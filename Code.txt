@@ -1,0 +1,48 @@
+   #include "TM4C123GH6PM.h"
+void delayMs(int n);
+void initGPIOF(void);
+int readDistance(void);
+int main(void) {
+	SYSCTL->RCGCGPIO = 0x02;
+	GPIOB->DIR= 0x0E;
+	GPIOB->DEN=0x0E;
+	
+	initGPIOF();
+	
+ while(1) {
+int d = readDistance();
+ if(d<=10){
+	 GPIOB->DATA =0;
+	     delayMs(5);
+ }
+ else {	  GPIOB->DATA =0x0E;}  }
+}
+void delayMs(int n){
+ int i, j;
+ for(i = 0 ; i < n; i++){
+ for(j = 0; j < 3180; j++) {}
+}	 
+}
+void initGPIOF(void) {
+  SYSCTL->RCGCGPIO|= 0x20;  
+  while((SYSCTL->PRGPIO & 0x20) == 0) {};  // wait for clock to stabilize
+  
+  GPIOF->DIR |= 0x02 ;  // set trigger as output,PF1
+  GPIOF->DIR &= ~0x04;  // set echo pin as input , PF2
+  GPIOF->DEN |= 0x06;  // enable digital I/O on trigger, echo, and green led
+}
+int readDistance(void) {
+ int distance = 0;
+  int startTime = 0;
+  int endTime = 0;
+  GPIOF->DATA |= 0x02;  // send a trigger pulse
+  delayMs(5);  // wait for 10ms
+  GPIOF->DATA &= ~0x02;
+  while((GPIOF->DATA & 0x04) == 0) {  // wait for start of echo pulse
+    startTime++;
+  }
+  while((GPIOF->DATA & 0x04) != 0) {  // wait for end of echo pulse
+    endTime++;
+ }
+  distance = ((endTime - startTime) * 0.034) /2;  // convert time to distance
+  return distance;}
