@@ -1,0 +1,1 @@
+The smart fan project aims to automate the operation of a fan based on the presence or absence of an object within a certain range. It utilizes an ultrasonic sensor to measure the distance between the fan and the object. When an object is detected within a specified range, the fan is turned off. When there is no object detected or the object is out of range, the fan is turned on.
